@@ -2,6 +2,7 @@ const process = require('process');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const { isPromise } = require('util/types');
 const I18N = require('@ladjs/i18n');
 const _ = require('lodash');
 const consolidate = require('@ladjs/consolidate');
@@ -251,7 +252,11 @@ class Email {
       if (locale !== locals.locale) i18n.setLocale(locals.locale);
     }
 
-    const res = await util.promisify(renderFn)(filePath, locals);
+    const res = await (isPromise(
+      Reflect.apply(renderFn, this, [filePath, locals])
+    )
+      ? renderFn(filePath, locals)
+      : util.promisify(renderFn)(filePath, locals));
     // transform the html with juice using remote paths
     // google now supports media queries
     // https://developers.google.com/gmail/design/reference/supported_css
