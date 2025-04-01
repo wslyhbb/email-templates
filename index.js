@@ -285,7 +285,7 @@ class Email {
       message.subject = this.config.subjectPrefix + message.subject;
 
     // trim subject
-    if (message.subject) message.subject = message.subject.trim();
+    message.subject &&= message.subject.trim();
 
     if (this.config.htmlToText && message.html && !message.text)
       // we'd use nodemailer-html-to-text plugin
